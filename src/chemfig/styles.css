@@ -1,0 +1,19 @@
+:root{
+  --bg: #f7f7f8;
+  --panel: #ffffff;
+  --accent: #2563eb;
+}
+body{font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background:var(--bg); margin:0; padding:24px}
+.container{max-width:760px;margin:0 auto;background:var(--panel);padding:20px;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,0.06)}
+.controls{display:flex;gap:12px}
+textarea{flex:1;padding:8px;font-family:monospace}
+.buttons{display:flex;flex-direction:column;gap:8px}
+button{background:var(--accent);color:white;border:none;padding:8px 12px;border-radius:6px;cursor:pointer}
+.output{margin-top:16px;border-radius:6px;padding:12px;background:#f3f4f6;min-height:140px;display:flex;align-items:center;justify-content:center}
+.error{color:#b91c1c}
+
+.container{max-width:760px;margin:0 auto;background:var(--panel);padding:20px;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,0.06)}
+select#exampleSelect{padding:10px;border-radius:6px;border:1px solid #e5e7eb;width:100%;font-size:14px}
+.controls textarea{flex:1}
+.controls{display:flex;gap:12px;align-items:start}
+.code{background:#fff;padding:8px;border-radius:6px;border:1px solid #e5e7eb;white-space:pre-wrap;font-family:monospace}

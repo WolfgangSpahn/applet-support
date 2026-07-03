@@ -1,0 +1,54 @@
+{
+  "name": "__PACKAGE__",
+  "version": "0.0.0",
+  "description": "",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "style": "./dist/style.css",
+
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./style.css": {
+      "default": "./dist/style.css"
+    }
+  },
+
+  "files": [
+    "dist"
+  ],
+
+  "sideEffects": [
+    "**/*.css"
+  ],
+
+  "scripts": {
+    "start": "vite",
+    "dev": "vite --config dev/vite.config.ts",
+    "build": "vite build",
+    "build-app": "vite build --config dev/vite.config.ts",
+    "serve": "vite preview",
+    "preview": "vite preview --config dev/vite.config.ts"
+  },
+
+  "dependencies": {
+    "applet-support": "file:../applet-support",
+    "solid-js": "^1.9.9"
+  },
+
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.13",
+    "@types/node": "^25.9.0",
+    "solid-devtools": "^0.34.3",
+    "tailwindcss": "^4.1.13",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.4",
+    "vite-plugin-solid": "^2.11.8"
+  }
+}

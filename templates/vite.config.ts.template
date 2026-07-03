@@ -1,0 +1,52 @@
+import { defineConfig } from 'vite';
+import solidPlugin from 'vite-plugin-solid';
+import tailwindcss from '@tailwindcss/vite';
+import { fileURLToPath, URL } from 'node:url';
+
+export default defineConfig({
+  base: './',
+
+  resolve: {
+    alias: {
+      '@src': fileURLToPath(new URL('./src', import.meta.url)),
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+      '~': fileURLToPath(new URL('./src', import.meta.url)),
+    },
+  },
+
+  plugins: [
+    tailwindcss(),
+    solidPlugin(),
+  ],
+
+  build: {
+    target: 'esnext',
+    outDir: 'dist',
+    emptyOutDir: true,
+
+    lib: {
+      entry: 'src/index.tsx',
+      name: '__LIB_NAME__',
+      cssFileName: 'style',
+
+      fileName: (format) => {
+        if (format === 'es') return 'index.js';
+        if (format === 'cjs') return 'index.cjs';
+        return `index.${format}.js`;
+      },
+
+      formats: ['es', 'cjs'],
+    },
+
+    rollupOptions: {
+      external: ['solid-js'],
+
+      output: {
+        exports: 'named',
+        globals: {
+          'solid-js': 'solidjs',
+        },
+      },
+    },
+  },
+});
