@@ -1,4 +1,15 @@
-# Chemfig demo (Vite + TypeScript)
+
+# Support for applet packages
+
+This package contains templates and build scripts for creating applet packages. In addition it holds the chemfig js/ts engine, which allows rendering of a subset of ChemFig formulas to SVG in the browser.
+
+## js/ts package support
+
+All applet packages are using config templates defines here in `templates/`.
+
+They use the Makefile template `solidjs-package.mk` to keep the package structure and build process consistent. 
+
+## Chemfig demo (Vite + TypeScript)
 
 Quick demo to exercise a partial ChemFig parser + SVG renderer (Vite + TypeScript).
 

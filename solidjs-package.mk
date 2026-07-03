@@ -107,7 +107,7 @@ endif
 # -------------------------------------------------------------------
 
 config:                                   ## Generate local config files
-config: vite-config tailwind-config tsconfig package-json 
+config: vite-config tailwind-config tsconfig package-json extra
 
 # -------------------------------------------------------------------
 # Install
