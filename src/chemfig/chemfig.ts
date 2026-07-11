@@ -28,6 +28,11 @@ type ParsedChemfig = {
   root: MoleculeNode;
 };
 
+type ChemfigSvgOptions = {
+  width?: number;
+  height?: number;
+};
+
 function parseChargeSpec(chargeSpec: string): ChargeItem[] {
   return chargeSpec
     .split(",")
@@ -343,7 +348,7 @@ function renderChargeItems(parts: string[], atom: ParsedAtom, cx: number, cy: nu
   }
 }
 
-export function chemfigLewisToSvg(input: string): string {
+export function chemfigLewisToSvg(input: string, options: ChemfigSvgOptions = {}): string {
   const parsed = parseChemfig(input);
 
   const bondLength = 72;
@@ -439,6 +444,8 @@ export function chemfigLewisToSvg(input: string): string {
 
   const width = maxX - minX;
   const height = maxY - minY;
+  const svgWidth = options.width ?? width;
+  const svgHeight = options.height ?? height;
 
   const shiftX = -minX;
   const shiftY = -minY;
@@ -447,9 +454,10 @@ export function chemfigLewisToSvg(input: string): string {
 
   parts.push(`
   <svg xmlns="http://www.w3.org/2000/svg"
-       width="${width}"
-       height="${height}"
-       viewBox="0 0 ${width} ${height}">
+      width="${svgWidth}"
+      height="${svgHeight}"
+      viewBox="0 0 ${width} ${height}"
+      preserveAspectRatio="xMidYMid meet">
   `);
 
   renderBondsRecursive(parts, layout, shiftX, shiftY, atomRadius);
