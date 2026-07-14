@@ -31,6 +31,7 @@ type ParsedChemfig = {
 type ChemfigSvgOptions = {
   width?: number;
   height?: number;
+  padding?: number;
 };
 
 function parseChargeSpec(chargeSpec: string): ChargeItem[] {
@@ -353,7 +354,7 @@ export function chemfigLewisToSvg(input: string, options: ChemfigSvgOptions = {}
 
   const bondLength = 72;
   const atomRadius = 18;
-  const padding = 56;
+  const padding = options.padding ?? 40;
 
   type PositionedNode = {
     node: MoleculeNode;
