@@ -1,0 +1,31 @@
+# Page 1
+
+This page checks standard markdown and inline emphasis.
+
+Paragraph with **bold** text.
+
+---
+
+# Page 2
+
+::: {.note}
+
+Important information.
+
+:::
+
+---
+
+# Page 3
+
+::: {.columns}
+
+::: {.column width="50%"}
+Left
+:::
+
+::: {.column width="50%"}
+Right
+:::
+
+:::

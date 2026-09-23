@@ -1,0 +1,114 @@
+<!doctype html>
+
+<html>
+
+<head>
+  <meta charset="utf-8">
+
+  <meta
+    name="viewport"
+    content="
+      width=device-width,
+      initial-scale=1.0,
+      maximum-scale=1.0,
+      user-scalable=no
+    "
+  >
+
+  <title>MyPandoc Presentation</title>
+
+  <!-- Reveal.js -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reveal.css"
+  >
+
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/theme/white.css"
+  >
+
+  <!-- KaTeX -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+  >
+
+  <!-- MyPandoc -->
+  <link
+    rel="stylesheet"
+    href="styles.css"
+  >
+</head>
+
+
+<body>
+
+<div class="reveal">
+
+  <div class="slides">
+
+{{SLIDES}}
+
+  </div>
+
+</div>
+
+
+<!-- -----------------------------------------------------------------------
+     Slide menu
+     -------------------------------------------------------------------- -->
+
+<button
+  id="slide-menu-button"
+  type="button"
+  aria-label="Slide menu"
+  title="Slides (M)"
+>
+  ☰
+</button>
+
+
+<div id="slide-menu">
+
+  <div id="slide-menu-header">
+    Slides
+  </div>
+
+  <div id="slide-menu-items">
+  </div>
+
+</div>
+
+
+<!-- -----------------------------------------------------------------------
+     Reveal.js
+     -------------------------------------------------------------------- -->
+
+<script
+  src="https://cdn.jsdelivr.net/npm/reveal.js@5/dist/reveal.js">
+</script>
+
+
+<script>
+Reveal.initialize({
+  hash: true,
+  controls: true,
+  progress: true,
+  center: false,
+  slideNumber: false,
+  transition: 'slide'
+});
+</script>
+
+
+<!-- -----------------------------------------------------------------------
+     MyPandoc browser functionality
+     -------------------------------------------------------------------- -->
+
+
+<script src="dist/reveal-menu.js"></script>
+
+</body>
+
+</html>
