@@ -1,15 +1,16 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
-    "module": "ESNext",
-    "moduleResolution": "Node",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "outDir": "dist",
-    "jsx": "preserve",
-    "lib": ["ES2020", "DOM"]
+    "target": "ES2020",                        // generate/assume ES2020 JavaScript
+    "module": "ESNext",                        // leave imports/exports for Vite
+    "moduleResolution": "Bundler",             // resolve imports the way Vite does
+    "strict": true,                            // enable strict TypeScript type checking
+    "esModuleInterop": true,                   // simplify imports from CommonJS packages
+    "skipLibCheck": true,                      // don't type-check dependency .d.ts files
+    "forceConsistentCasingInFileNames": true,  // enforce exact filename capitalization
+    "rootDir": "src",                          // TypeScript source directory
+    "outDir": "dist",                          // output directory when tsc emits files
+    "jsx": "preserve",                         // leave JSX transformation to Solid/Vite
+    "lib": ["ES2020", "DOM"]                   // JavaScript + browser API type definitions
   },
-  "include": ["src"]
+  "include": ["src"]                           // only include files below src
 }
