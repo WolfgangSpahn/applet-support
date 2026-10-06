@@ -34,14 +34,16 @@ interface FencedDivInfo {
   fenceLength: number;
 }
 
-type PlaceholderKind = 'DISPLAY_MATH' | 'INLINE_MATH' | 'CHEMFIG';
+type PlaceholderKind = 'DISPLAY_MATH' | 'INLINE_MATH' | 'CHEMFIG' | 'SUPERSCRIPT';
 
 interface Placeholder {
   kind: PlaceholderKind;
   value: string;
 }
 
-const placeholderPrefix = 'AIDU_BLEND_';
+// Keep placeholders strictly alphanumeric so Markdown emphasis parsing cannot
+// rewrite their contents before they are restored to HTML.
+const placeholderPrefix = 'AIDUBLENDPLACEHOLDER';
 
 marked.setOptions({ breaks: true, gfm: true });
 
@@ -61,7 +63,7 @@ function protectPattern(
   kind: PlaceholderKind,
 ) {
   return text.replace(regex, (_match, value) => {
-    const key = `${placeholderPrefix}${Object.keys(placeholders).length}_${kind}`;
+    const key = `${placeholderPrefix}${Object.keys(placeholders).length}${kind}`;
     placeholders[key] = { kind, value: String(value).trim() };
     return key;
   });
@@ -129,6 +131,8 @@ function protectInlineRenderables(text: string) {
   protectedText = protectPattern(protectedText, placeholders, /\\\[([\s\S]*?)\\\]/g, 'DISPLAY_MATH');
   protectedText = protectPattern(protectedText, placeholders, /\\\(([\s\S]*?)\\\)/g, 'INLINE_MATH');
   protectedText = protectPattern(protectedText, placeholders, /(?<!\$)\$([^\$\n]+)\$(?!\$)/g, 'INLINE_MATH');
+  // Pandoc superscript syntax: ^text^ (for example, ^v0.4.0^).
+  protectedText = protectPattern(protectedText, placeholders, /\^([^\s^]+)\^/g, 'SUPERSCRIPT');
 
   return { protectedText, placeholders };
 }
@@ -161,7 +165,9 @@ function restorePlaceholders(html: string, placeholders: Record<string, Placehol
   for (const [key, placeholder] of Object.entries(placeholders)) {
     const replacement = placeholder.kind === 'CHEMFIG'
       ? renderChemfig(placeholder.value)
-      : renderMath(placeholder.value, placeholder.kind === 'DISPLAY_MATH');
+      : placeholder.kind === 'SUPERSCRIPT'
+        ? `<sup>${escapeHtml(placeholder.value)}</sup>`
+        : renderMath(placeholder.value, placeholder.kind === 'DISPLAY_MATH');
     restoredHtml = restoredHtml.split(key).join(replacement);
   }
   return restoredHtml;
@@ -246,19 +252,95 @@ function isOpeningFencedDiv(line: string) {
 
 function renderFencedDiv(info: FencedDivInfo, content: string) {
   const classNames = info.classes.map((item) => escapeAttribute(item)).join(' ');
-  const attributeEntries = Object.entries(info.attributes).map(([key, value]) => ` data-${escapeAttribute(key)}="${escapeAttribute(value)}"`);
   const classAttribute = classNames ? ` class="${classNames}"` : '';
-  return `<div${classAttribute}${attributeEntries.join('')}>${content}</div>`;
+  const attributes = { ...info.attributes };
+  const width = attributes.width;
+  delete attributes.width;
+
+  // Quarto's `.column width="…"` controls the flex item basis. Validate the
+  // value before putting it in CSS; other fenced-div attributes remain data-*.
+  const validWidth = width && /^(?:\d+(?:\.\d+)?(?:%|px|em|rem|vw|vh)|auto)$/.test(width)
+    ? width
+    : undefined;
+  const styleAttribute = validWidth && info.classes.includes('column')
+    ? ` style="flex: 0 1 ${escapeAttribute(validWidth)};"`
+    : '';
+  const attributeEntries = Object.entries(attributes).map(([key, value]) => ` data-${escapeAttribute(key)}="${escapeAttribute(value)}"`);
+  return `<div${classAttribute}${styleAttribute}${attributeEntries.join('')}>${content}</div>`;
 }
 
 function renderMarkdownFragment(markdown: string, options: BlendedMarkedOptions, state: RenderState) {
-  const { protectedText, placeholders } = protectInlineRenderables(markdown.trim());
+  // Pandoc/Quarto image attributes are not understood by Marked and otherwise
+  // appear as literal text after the image. Preserve the common image attrs.
+  const withImageAttributes = markdown.trim().replace(
+    /!\[([^\]]*)\]\(([^)]+)\)(?:\{([^{}]*)\})?/g,
+    (match: string, alt: string, rawSource: string, rawAttributes: string | undefined, offset: number, original: string) => {
+      const source = rawSource.trim().replace(/\\([()\\])/g, '$1');
+      const attributes = (rawAttributes ?? "").match(/(?:\.[A-Za-z][\w-]*(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s]+))?|[A-Za-z][\w-]*\s*=\s*(?:"[^"]*"|'[^']*'|[^\s]+))/g) ?? [];
+      const allowed = new Set(['width', 'height', 'title', 'class', 'style', 'attach', 'top', 'right', 'bottom', 'left']);
+      const htmlAttributes: string[] = [];
+      const cssDimensions: string[] = [];
+      const classes: string[] = [];
+      const edgeValues: Record<string, string> = {};
+      for (const attribute of attributes) {
+        if (attribute.startsWith('.') && !attribute.includes('=')) {
+          classes.push(attribute.slice(1));
+          continue;
+        }
+        const parsed = /^(\.?[A-Za-z][\w-]*)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s]+))$/.exec(attribute);
+        if (!parsed) continue;
+        const key = parsed[1].replace(/^\./, '').toLowerCase();
+        if (!allowed.has(key)) continue;
+        const value = parsed[2] ?? parsed[3] ?? parsed[4] ?? '';
+        if (key === 'width' || key === 'height') {
+          const dimension = /^(?:-?\d+(?:\.\d+)?(?:px|%|em|rem|vw|vh)?|auto)$/.test(value)
+            ? (value.match(/^-?\d+(?:\.\d+)?$/) ? `${value}px` : value)
+            : '';
+          if (dimension) cssDimensions.push(`${key}: ${dimension}`);
+        } else if (['top', 'right', 'bottom', 'left'].includes(key)) {
+          const dimension = /^-?\d+(?:\.\d+)?(?:px|%|em|rem|vw|vh)?$/.test(value)
+            ? (value.match(/^-?\d+(?:\.\d+)?$/) ? `${value}px` : value)
+            : '';
+          if (dimension) edgeValues[key] = dimension;
+        } else if (key === 'style') {
+          cssDimensions.push(value);
+        } else if (key === 'attach') {
+          if (value === 'bottom') {
+            classes.push('absolute');
+            htmlAttributes.push('data-attach="bottom"');
+            edgeValues.bottom = '1rem';
+            edgeValues.left = '50%';
+            cssDimensions.push('transform: translateX(-50%)');
+          }
+        } else if (key === 'class') {
+          classes.push(...value.split(/\s+/).filter(Boolean));
+        } else {
+          htmlAttributes.push(`${key}="${escapeAttribute(value)}"`);
+        }
+      }
+      if (classes.includes('absolute')) {
+        cssDimensions.push('position: absolute', 'top: auto', 'right: auto', 'bottom: auto', 'left: auto', ...Object.entries(edgeValues).map(([edge, value]) => `${edge}: ${value}`));
+      }
+      const uniqueClasses = [...new Set(classes)];
+      if (uniqueClasses.length) htmlAttributes.push(`class="${escapeAttribute(uniqueClasses.join(' '))}"`);
+      if (cssDimensions.length) htmlAttributes.push(`style="${escapeAttribute(cssDimensions.join('; '))}"`);
+      const renderedAttributes = htmlAttributes.join(' ');
+      const image = `<img src="${escapeAttribute(source)}" alt="${escapeAttribute(alt.replace(/[*_~`]/g, ''))}"${renderedAttributes ? ` ${renderedAttributes}` : ''}>`;
+      const beforeLine = original.slice(0, offset).split(/\r?\n/).pop() ?? '';
+      const afterLine = original.slice(offset + match.length).split(/\r?\n/, 1)[0] ?? '';
+      const isStandaloneFigure = !beforeLine.trim() && !afterLine.trim() && Boolean(alt.trim());
+      if (!isStandaloneFigure) return image;
+      const caption = marked.parseInline(alt, { async: false }) as string;
+      return `<figure class="quarto-figure quarto-figure-center">${image}<figcaption>${caption}</figcaption></figure>`;
+    },
+  );
+  const { protectedText, placeholders } = protectInlineRenderables(withImageAttributes);
   let html = marked.parse(protectedText, { async: false }) as string;
   html = applyDomTransforms(html, options, state);
   html = restorePlaceholders(html, placeholders);
 
   return DOMPurify.sanitize(html, {
-    ADD_TAGS: ['svg', 'path', 'g', 'line', 'circle', 'ellipse', 'polygon', 'polyline', 'text', 'defs', 'marker', 'rect', 'span'],
+    ADD_TAGS: ['svg', 'path', 'g', 'line', 'circle', 'ellipse', 'polygon', 'polyline', 'text', 'defs', 'marker', 'rect', 'span', 'sup'],
     ADD_ATTR: [
       'class',
       'style',
@@ -270,6 +352,7 @@ function renderMarkdownFragment(markdown: string, options: BlendedMarkedOptions,
       'title',
       'loading',
       'viewBox',
+      'data-attach',
       'width',
       'height',
       'x',
@@ -314,7 +397,7 @@ function renderMarkdownBlocks(markdown: string, options: BlendedMarkedOptions, s
       continue;
     }
 
-    let depth = 1;
+    const fenceStack = [opening.fenceLength];
     let closingIndex = -1;
 
     for (
@@ -322,15 +405,20 @@ function renderMarkdownBlocks(markdown: string, options: BlendedMarkedOptions, s
       nestedIndex < lines.length;
       nestedIndex += 1
     ) {
-      const closingFenceLength =
-        getClosingFenceLength(lines[nestedIndex]);
+      const nestedOpening = parseFencedDivInfo(lines[nestedIndex]);
+      if (nestedOpening) {
+        fenceStack.push(nestedOpening.fenceLength);
+        continue;
+      }
 
-      if (
-        closingFenceLength !== null &&
-        closingFenceLength >= opening.fenceLength
-      ) {
-        closingIndex = nestedIndex;
-        break;
+      const closingFenceLength = getClosingFenceLength(lines[nestedIndex]);
+      const currentFenceLength = fenceStack[fenceStack.length - 1];
+      if (closingFenceLength !== null && closingFenceLength >= currentFenceLength) {
+        fenceStack.pop();
+        if (fenceStack.length === 0) {
+          closingIndex = nestedIndex;
+          break;
+        }
       }
     }
 
@@ -400,7 +488,10 @@ function applyDomTransforms(html: string, options: BlendedMarkedOptions, state: 
   });
   template.content.querySelectorAll('img').forEach((node) => {
     node.classList.add(...splitClasses(classes.image));
-    node.setAttribute('loading', 'lazy');
+    const declaredHeight = node.style.height || node.getAttribute('height') || '';
+    const heightMatch = /^(\d+(?:\.\d+)?)(?:px)?$/.exec(declaredHeight.trim());
+    const isSmallIcon = Boolean(heightMatch && Number(heightMatch[1]) <= 40);
+    node.setAttribute('loading', isSmallIcon ? 'eager' : 'lazy');
     const src = node.getAttribute('src');
     if (src) {
       node.setAttribute('src', resolveImageSource(src, options.imageResolver));
@@ -414,6 +505,26 @@ function applyDomTransforms(html: string, options: BlendedMarkedOptions, state: 
   return template.innerHTML;
 }
 
+function normalizeCompactTableDiv(markdown: string) {
+  const lines = markdown.split(/\r?\n/);
+  const output: string[] = [];
+  let inCompactTable = false;
+
+  for (const line of lines) {
+    if (!inCompactTable && /^\s*<div\s+class=["']compact-table["']\s*>\s*$/.test(line)) {
+      output.push(':::{.compact-table}');
+      inCompactTable = true;
+    } else if (inCompactTable && /^\s*<\/div>\s*$/.test(line)) {
+      output.push(':::');
+      inCompactTable = false;
+    } else {
+      output.push(line);
+    }
+  }
+
+  return output.join('\n');
+}
+
 export function renderBlendedMarkdown(markdown: string, options: BlendedMarkedOptions = {}) {
-  return renderMarkdownBlocks(markdown, options, { titleApplied: false });
+  return renderMarkdownBlocks(normalizeCompactTableDiv(markdown), options, { titleApplied: false });
 }

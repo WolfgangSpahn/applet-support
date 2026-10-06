@@ -34,6 +34,8 @@
     href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
   >
 
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js-plugins@4.6.0/chalkboard/style.css">
+
   <!-- MyPandoc -->
   <link
     rel="stylesheet"
@@ -44,7 +46,8 @@
 
 <body>
 
-<div class="reveal">
+<div class="aidu-presentation-activity">
+<div class="reveal aidu-presentation-activity__reveal">
 
   <div class="slides">
 
@@ -52,6 +55,7 @@
 
   </div>
 
+</div>
 </div>
 
 
@@ -68,6 +72,13 @@
   ☰
 </button>
 
+<button type="button" class="aidu-presentation-chalkboard__button" aria-label="Toggle chalkboard" title="Chalkboard" onclick="window.RevealChalkboard?.toggleChalkboard()">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4.5h16v12H4zM8 20h8M12 16.5V20M7 8h10M7 11h6" /></svg>
+</button>
+
+<button type="button" class="aidu-presentation-print__button" aria-label="Print presentation or save as PDF" title="Print / save as PDF" onclick="MyPandocPrint.printRevealPresentation(Reveal).catch(error => console.error(error))">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 8V3.5h10V8M7 17H5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M7 14h10v6.5H7zM17 11h.01" /></svg>
+</button>
 
 <div id="slide-menu">
 
@@ -90,6 +101,8 @@
 </script>
 
 
+<script src="https://cdn.jsdelivr.net/npm/reveal.js-plugins@4.6.0/chalkboard/plugin.js"></script>
+
 <script>
 Reveal.initialize({
   hash: true,
@@ -97,7 +110,9 @@ Reveal.initialize({
   progress: true,
   center: false,
   slideNumber: false,
-  transition: 'slide'
+  transition: 'slide',
+  plugins: [RevealChalkboard],
+  chalkboard: { toggleChalkboardButton: false, toggleNotesButton: false }
 });
 </script>
 
@@ -107,7 +122,8 @@ Reveal.initialize({
      -------------------------------------------------------------------- -->
 
 
-<script src="dist/reveal-menu.js"></script>
+<script src="reveal-menu.js"></script>
+<script src="print.js"></script>
 
 </body>
 

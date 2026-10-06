@@ -34,6 +34,8 @@
     href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
   >
 
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js-plugins@4.6.0/chalkboard/style.css">
+
   <!-- MyPandoc -->
   <link
     rel="stylesheet"
@@ -44,17 +46,16 @@
 
 <body>
 
-<div class="reveal">
+<div class="aidu-presentation-activity">
+<div class="reveal aidu-presentation-activity__reveal">
 
   <div class="slides">
-
 
 <section>
 <h1>MyPandoc Renderer Test</h1>
 <p>This document is intended to exercise the main features of <code>blended-marked</code>.</p>
 
 </section>
-
 <section>
 <h2>Basic Markdown</h2>
 <p>Normal paragraph with <strong>bold text</strong>, <em>italic text</em>, and <code>inline code</code>.</p>
@@ -73,7 +74,6 @@
 </ul>
 
 </section>
-
 <section>
 <h2>Block Quote</h2>
 <blockquote>
@@ -81,41 +81,38 @@
 </blockquote>
 
 </section>
-
 <section>
 <h2>Image</h2>
-<div class="image-medium"><p><img src="https://commons.wikimedia.org/wiki/Special:Redirect/file/Albert_Einstein_Head_cleaned.jpg" alt="Image" loading="lazy"></p>
-</div>
+<div class="image-medium"><figure class="quarto-figure quarto-figure-center"><img src="https://commons.wikimedia.org/wiki/Special:Redirect/file/Albert_Einstein_Head_cleaned.jpg" alt="Image" loading="lazy"><figcaption>Image</figcaption></figure></div>
 </section>
 
 <section>
-
 <section>
 <h2>Horizontal slide 2</h2>
 <p>Content</p>
 
 </section>
-
 <section>
 <h3>Vertical slide 2.1</h3>
 <p>More detail</p>
 
 </section>
-
 <section>
 <h3>Vertical slide 2.2</h3>
 <p>Even more detail</p>
 
 </section>
 </section>
-
+<section>
+<h2>Absolute positioning</h2>
+<div class="absolute-demo"><figure class="quarto-figure quarto-figure-center"><figcaption>Einstein</figcaption></figure><figure class="quarto-figure quarto-figure-center"><figcaption>Einstein</figcaption></figure><figure class="quarto-figure quarto-figure-center"><figcaption>Einstein</figcaption></figure><figure class="quarto-figure quarto-figure-center"><figcaption>Einstein</figcaption></figure><p>Content behind the images is unaffected by their absolute position.</p>
+</div>
+<img src="https://commons.wikimedia.org/wiki/Special:Redirect/file/Albert_Einstein_Head_cleaned.jpg" alt="Einstein" class="absolute" style="width: 20%; border: 4px solid red; position: absolute; top: auto; right: auto; bottom: auto; left: auto; top: 0px; left: 0px" loading="lazy"><img src="https://commons.wikimedia.org/wiki/Special:Redirect/file/Albert_Einstein_Head_cleaned.jpg" alt="Einstein" class="absolute" style="width: 20%; border: 4px solid blue; position: absolute; top: auto; right: auto; bottom: auto; left: auto; top: 0px; right: 0px" loading="lazy"><img src="https://commons.wikimedia.org/wiki/Special:Redirect/file/Albert_Einstein_Head_cleaned.jpg" alt="Einstein" class="absolute" style="width: 20%; border: 4px solid lime; position: absolute; top: auto; right: auto; bottom: auto; left: auto; bottom: 2rem; left: 0px" loading="lazy"><img src="https://commons.wikimedia.org/wiki/Special:Redirect/file/Albert_Einstein_Head_cleaned.jpg" alt="Einstein" class="absolute" style="width: 20%; border: 4px solid magenta; position: absolute; top: auto; right: auto; bottom: auto; left: auto; bottom: 2rem; right: 0px" loading="lazy"></section>
 <section>
 <h2>Two-column layout</h2>
 <div class="two-col"><div class="column"><p>Text links</p>
-</div><div class="column"><p><img src="https://commons.wikimedia.org/wiki/Special:Redirect/file/Albert_Einstein_Head_cleaned.jpg" alt="Image" loading="lazy"></p>
-</div></div>
+</div><div class="column"><figure class="quarto-figure quarto-figure-center"><img src="https://commons.wikimedia.org/wiki/Special:Redirect/file/Albert_Einstein_Head_cleaned.jpg" alt="Image" loading="lazy"><figcaption>Image</figcaption></figure></div></div>
 </section>
-
 <section>
 <h2>Headings</h2>
 <h1>Heading level 1</h1>
@@ -124,7 +121,6 @@
 <h4>Heading level 4</h4>
 
 </section>
-
 <section>
 <h2>Inline mathematics</h2>
 <p>Einstein:</p>
@@ -137,7 +133,6 @@
 <p><span class="math-inline"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow><mfrac><mrow><mi>a</mi><mo>+</mo><mi>b</mi></mrow><mrow><mi>c</mi><mo>+</mo><mi>d</mi></mrow></mfrac></mrow>\frac{a+b}{c+d}</math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.2834em;vertical-align:-0.4033em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8801em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">c</span><span class="mbin mtight">+</span><span class="mord mathnormal mtight">d</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">a</span><span class="mbin mtight">+</span><span class="mord mathnormal mtight">b</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.4033em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span></p>
 
 </section>
-
 <section>
 <h2>Display mathematics</h2>
 <p>Using dollar syntax:</p>
@@ -165,7 +160,6 @@ M834 80h400000v40h-400000z"></path></svg></span></span></span><span class="vlist
 \end{pmatrix}</math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">A</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.4em;vertical-align:-0.95em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size3">(</span></span><span class="mord"><span class="mtable"><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.45em;"><span style="top:-3.61em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">1</span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">3</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.95em;"><span></span></span></span></span></span><span class="arraycolsep" style="width:0.5em;"></span><span class="arraycolsep" style="width:0.5em;"></span><span class="col-align-c"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.45em;"><span style="top:-3.61em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">2</span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">4</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.95em;"><span></span></span></span></span></span></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size3">)</span></span></span></span></span></span></span></div><p></p>
 
 </section>
-
 <section>
 <h2>Mixed Markdown and mathematics</h2>
 <p>The quadratic equation</p>
@@ -188,7 +182,6 @@ M834 80h400000v40h-400000z"></path></svg></span></span></span><span class="vlist
 <p>This paragraph continues normally after the mathematics.</p>
 
 </section>
-
 <section>
 <h2>Chemistry</h2>
 <p><span class="chemfig-inline">
@@ -224,7 +217,6 @@ M834 80h400000v40h-400000z"></path></svg></span></span></span><span class="vlist
 </svg></span></p>
 
 </section>
-
 <section>
 <h2>Fenced div</h2>
 <div class="important"><h2>Important section</h2>
@@ -236,6 +228,7 @@ M834 80h400000v40h-400000z"></path></svg></span></span></span><span class="vlist
 
   </div>
 
+</div>
 </div>
 
 
@@ -252,6 +245,13 @@ M834 80h400000v40h-400000z"></path></svg></span></span></span><span class="vlist
   ☰
 </button>
 
+<button type="button" class="aidu-presentation-chalkboard__button" aria-label="Toggle chalkboard" title="Chalkboard" onclick="window.RevealChalkboard?.toggleChalkboard()">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4.5h16v12H4zM8 20h8M12 16.5V20M7 8h10M7 11h6" /></svg>
+</button>
+
+<button type="button" class="aidu-presentation-print__button" aria-label="Print presentation or save as PDF" title="Print / save as PDF" onclick="MyPandocPrint.printRevealPresentation(Reveal).catch(error => console.error(error))">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 8V3.5h10V8M7 17H5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M7 14h10v6.5H7zM17 11h.01" /></svg>
+</button>
 
 <div id="slide-menu">
 
@@ -274,6 +274,8 @@ M834 80h400000v40h-400000z"></path></svg></span></span></span><span class="vlist
 </script>
 
 
+<script src="https://cdn.jsdelivr.net/npm/reveal.js-plugins@4.6.0/chalkboard/plugin.js"></script>
+
 <script>
 Reveal.initialize({
   hash: true,
@@ -281,7 +283,9 @@ Reveal.initialize({
   progress: true,
   center: false,
   slideNumber: false,
-  transition: 'slide'
+  transition: 'slide',
+  plugins: [RevealChalkboard],
+  chalkboard: { toggleChalkboardButton: false, toggleNotesButton: false }
 });
 </script>
 
@@ -291,7 +295,8 @@ Reveal.initialize({
      -------------------------------------------------------------------- -->
 
 
-<script src="dist/reveal-menu.js"></script>
+<script src="reveal-menu.js"></script>
+<script src="print.js"></script>
 
 </body>
 

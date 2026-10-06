@@ -52,6 +52,24 @@ More detail
 Even more detail
 ---
 
+## Absolute positioning
+
+::: {.absolute-demo}
+
+![Einstein](https://commons.wikimedia.org/wiki/Special:Redirect/file/Albert_Einstein_Head_cleaned.jpg){width="20%" .absolute top="0" left="0" style="border: 4px solid red"}
+
+![Einstein](https://commons.wikimedia.org/wiki/Special:Redirect/file/Albert_Einstein_Head_cleaned.jpg){width="20%" .absolute top="0" right="0" style="border: 4px solid blue"}
+
+![Einstein](https://commons.wikimedia.org/wiki/Special:Redirect/file/Albert_Einstein_Head_cleaned.jpg){width="20%" .absolute bottom="2rem" left="0" style="border: 4px solid lime"}
+
+![Einstein](https://commons.wikimedia.org/wiki/Special:Redirect/file/Albert_Einstein_Head_cleaned.jpg){width="20%" .absolute bottom="2rem" right="0" style="border: 4px solid magenta"}
+
+Content behind the images is unaffected by their absolute position.
+
+:::
+
+---
+
 ## Two-column layout
 
 :::: {.two-col}

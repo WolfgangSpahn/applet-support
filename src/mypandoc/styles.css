@@ -1,298 +1,575 @@
-/* =========================================================================
-   MyPandoc
-   ========================================================================= */
-
-
-/* -------------------------------------------------------------------------
-   General Reveal layout
-   ------------------------------------------------------------------------- */
-
-.reveal {
-  font-family:
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
+.aidu-presentation-activity {
+  position: relative;
+  width: 100vw;
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+  background: #fff;
+  color: #17212b;
 }
 
+.aidu-welcome.aidu-welcome--presentation {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  width: 100vw;
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+  padding: 0;
+  background: #fff;
+}
 
-.reveal .slides {
+.aidu-welcome--presentation .aidu-welcome__inner {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  margin: 0;
+}
+
+.aidu-presentation-activity__reveal {
+  width: 100%;
+  height: 100%;
+}
+
+/* Content rules adapted from applet-support/src/mypandoc/styles.css and
+   scoped to the embedded deck. */
+.aidu-presentation-activity .reveal {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 32px;
+}
+
+.aidu-presentation-activity .reveal sup {
+  font-size: 0.65em;
+  line-height: 0;
+  vertical-align: super;
+}
+
+.aidu-presentation-activity .reveal .slides {
   text-align: left;
 }
 
-
-.reveal .slides section {
+.aidu-presentation-activity .reveal .slides section {
   box-sizing: border-box;
+  height: 100% !important;
+  min-height: 100% !important;
+  padding-top: 24px;
 }
 
+.aidu-presentation-activity .reveal .slides section.v-cent.present,
+.aidu-presentation-activity .reveal .slides section.has-v-cent.present {
+  display: flex !important;
+  flex-direction: column;
+  justify-content: center;
+}
 
-/* -------------------------------------------------------------------------
-   Headings
-   ------------------------------------------------------------------------- */
+.aidu-presentation-activity .reveal .slides section.has-v-cent.present > .v-cent {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  justify-content: center;
+}
 
-.reveal h1,
-.reveal h2,
-.reveal h3,
-.reveal h4 {
+.aidu-presentation-activity .reveal .slides section.h-cent,
+.aidu-presentation-activity .reveal .slides .h-cent {
+  text-align: center;
+}
+
+.aidu-presentation-activity .reveal .slides section img.absolute {
+  max-width: 90%;
+  max-height: 35vh;
+  margin: 0 !important;
+  object-fit: contain;
+  z-index: 1;
+}
+
+.aidu-presentation-activity .reveal figure.quarto-figure {
+  display: table;
+  max-width: 100%;
+  margin: 1rem auto;
+}
+
+.aidu-presentation-activity .reveal figure.quarto-figure > img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto;
+}
+
+.aidu-presentation-activity .reveal figure.quarto-figure > figcaption {
+  display: table-caption;
+  caption-side: bottom;
+  margin-top: 0.4rem;
+  text-align: center;
+  font-size: 0.6em;
+  font-style: italic;
+  line-height: 1.2;
+}
+
+.aidu-presentation-activity .reveal .slides section img[data-attach="bottom"] {
+  top: auto !important;
+  right: auto !important;
+  bottom: 1rem !important;
+  left: 50% !important;
+  display: block !important;
+  max-width: 90% !important;
+  max-height: 35vh !important;
+  transform: translateX(-50%) !important;
+}
+
+.aidu-presentation-activity .reveal .centered-xxl-text {
+  font-size: 64px;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* `{.dense}` on a slide heading scales the following slide content as a whole. */
+.aidu-presentation-activity .reveal .dense-content {
+  zoom: 0.8;
+  width: 100%;
+}
+
+.aidu-presentation-activity .reveal .text-3xl { font-size: 1.875em !important; }
+.aidu-presentation-activity .reveal .text-2xl { font-size: 1.5em !important; }
+.aidu-presentation-activity .reveal .text-xl { font-size: 1.25em !important; }
+.aidu-presentation-activity .reveal .text-lg { font-size: 1.125em !important; }
+.aidu-presentation-activity .reveal .text-base { font-size: 1em !important; }
+.aidu-presentation-activity .reveal .text-sm { font-size: .875em !important; }
+.aidu-presentation-activity .reveal .text-xs { font-size: .75em !important; }
+.aidu-presentation-activity .reveal .text-2xs { font-size: .625em !important; }
+.aidu-presentation-activity .reveal .text-3xs { font-size: .5em !important; }
+
+.aidu-presentation-activity .reveal .slides ul > li,
+.aidu-presentation-activity .reveal .slides ol > li {
+  font-size: x-large;
+}
+
+.aidu-presentation-activity .reveal .slides ul ul > li,
+.aidu-presentation-activity .reveal .slides ol ol > li {
+  font-size: large;
+}
+
+.aidu-presentation-activity .reveal .slides ul ul ul > li,
+.aidu-presentation-activity .reveal .slides ol ol ol > li {
+  font-size: medium;
+}
+
+.aidu-presentation-activity .reveal .slides ul ul ul ul > li,
+.aidu-presentation-activity .reveal .slides ol ol ol ol > li {
+  font-size: small;
+}
+
+.aidu-presentation-activity .reveal h1,
+.aidu-presentation-activity .reveal h2,
+.aidu-presentation-activity .reveal h3,
+.aidu-presentation-activity .reveal h4 {
   text-transform: none;
 }
 
+.aidu-presentation-activity .reveal h1 {
+  font-family: "Courier New", monospace;
+  color: #a3002f;
+  font-weight: bold;
+  font-size: 3.25em;
+}
 
-.reveal h1 {
+.aidu-presentation-activity .reveal h2 {
+  font-family: "Courier New", monospace;
+  margin-bottom: 40px;
+  color: #a3002f;
+  font-weight: 600;
   font-size: 2em;
 }
 
-
-.reveal h2 {
-  font-size: 1.5em;
-}
-
-
-.reveal h3 {
+.aidu-presentation-activity .reveal h3 {
+  margin-left: 1.5rem;
   font-size: 1.15em;
+}
 
+.aidu-presentation-activity .reveal h3 ~ * {
   margin-left: 1.5rem;
 }
 
-
-.reveal h3 ~ * {
-  margin-left: 1.5rem;
-}
-
-
-/* -------------------------------------------------------------------------
-   Code
-   ------------------------------------------------------------------------- */
-
-.reveal code {
-  font-family:
-    "SFMono-Regular",
-    Consolas,
-    "Liberation Mono",
-    monospace;
-}
-
-
-.reveal pre {
+.aidu-presentation-activity .reveal pre {
   width: 100%;
 }
 
-
-/* -------------------------------------------------------------------------
-   Block quotes
-   ------------------------------------------------------------------------- */
-
-.reveal blockquote {
-  width: auto;
-
-  margin-left: 0;
-  margin-right: 0;
-
-  padding: 0.5em 1em;
-
-  border-left: 4px solid #888;
-
+.aidu-presentation-activity .reveal blockquote {
+  display: block;
+  position: relative;
+  width: unset;
+  margin: var(--r-block-margin, 12px) auto;
+  padding: 0.625rem 1.75rem;
+  border-left: 0.25rem solid #707070;
+  color: #707070;
+  font-style: normal;
+  background: none;
   box-shadow: none;
 }
 
+.aidu-presentation-activity .reveal blockquote p:first-child,
+.aidu-presentation-activity .reveal blockquote p:last-child {
+  display: block;
+}
 
-/* -------------------------------------------------------------------------
-   Fenced div: important
-   ------------------------------------------------------------------------- */
-
-.important {
+.aidu-presentation-activity .important {
   padding: 1rem 1.25rem;
-
   border-left: 4px solid #666;
-
   background: #f3f4f6;
 }
 
-
-/* =========================================================================
-   Reveal slide menu
-   ========================================================================= */
-
-
-/* -------------------------------------------------------------------------
-   Hamburger button
-   ------------------------------------------------------------------------- */
-
-#slide-menu-button {
-  position: fixed;
-
-  left: 16px;
-  bottom: 16px;
-
-  z-index: 1100;
-
-  width: 42px;
-  height: 42px;
-
-  padding: 0;
-
-  border: none;
-  border-radius: 4px;
-
-  background:
-    rgba(0, 0, 0, 0.65);
-
-  color: white;
-
-  font-family: sans-serif;
-  font-size: 22px;
-  line-height: 42px;
-
-  text-align: center;
-
-  cursor: pointer;
-
-  pointer-events: auto;
-}
-
-
-#slide-menu-button:hover {
-  background:
-    rgba(0, 0, 0, 0.85);
-}
-
-
-/* -------------------------------------------------------------------------
-   Menu panel
-   ------------------------------------------------------------------------- */
-
-#slide-menu {
-  position: fixed;
-
-  top: 0;
-  bottom: 0;
-  left: 0;
-
-  z-index: 1050;
-
-  width: 360px;
-  max-width: 80vw;
-
-  overflow-y: auto;
-
-  background: white;
-  color: #222;
-
-  box-shadow:
-    4px 0 18px
-    rgba(0, 0, 0, 0.25);
-
-  transform:
-    translateX(-100%);
-
-  transition:
-    transform 180ms ease;
-
-  pointer-events: auto;
-}
-
-
-#slide-menu.open {
-  transform:
-    translateX(0);
-}
-
-
-/* -------------------------------------------------------------------------
-   Menu header
-   ------------------------------------------------------------------------- */
-
-#slide-menu-header {
-  padding:
-    20px 24px;
-
-  border-bottom:
-    1px solid #ddd;
-
-  font-family: sans-serif;
-  font-size: 1.2rem;
-  font-weight: 600;
-}
-
-
-/* -------------------------------------------------------------------------
-   Menu items
-   ------------------------------------------------------------------------- */
-
-#slide-menu-items {
-  padding:
-    8px 0 72px 0;
-}
-
-
-.slide-menu-item {
-  display: block;
-
-  width: 100%;
-
-  padding:
-    10px 24px;
-
-  border: none;
-
-  background: transparent;
-  color: inherit;
-
-  font-family: sans-serif;
-  font-size: 1rem;
-
-  text-align: left;
-
-  cursor: pointer;
-}
-
-
-.slide-menu-item:hover {
-  background: #eee;
-}
-
-
-.slide-menu-item:focus {
-  outline:
-    2px solid #666;
-
-  outline-offset:
-    -2px;
-}
-
-/* -------------------------------------------------------------------------
-   Image sizes
-   ------------------------------------------------------------------------- */
-
-.image-small img {
+.aidu-presentation-activity .image-small img {
   width: 30%;
 }
 
-.image-medium img {
+.aidu-presentation-activity .image-medium img {
   width: 50%;
 }
 
-.image-large img {
+.aidu-presentation-activity .image-large img {
   width: 80%;
 }
 
-/* -------------------------------------------------------------------------
-   Two-column layout
-   ------------------------------------------------------------------------- */
+.aidu-presentation-activity .reveal .compact-table {
+  width: 80%;
+  margin-inline: auto;
+  font-size: 0.68em;
+}
 
-.two-col {
+.aidu-presentation-activity .reveal .compact-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.aidu-presentation-activity .reveal .compact-table th,
+.aidu-presentation-activity .reveal .compact-table td {
+  padding: 0.12em 0.3em;
+  line-height: 1.1;
+  vertical-align: middle;
+}
+
+.aidu-presentation-activity .reveal .compact-table th p,
+.aidu-presentation-activity .reveal .compact-table td p {
+  margin: 0;
+}
+
+.aidu-presentation-activity .reveal .compact-table td:first-child {
+  white-space: nowrap;
+}
+
+.aidu-presentation-activity .reveal .compact-table td:nth-child(2) {
+  width: 3em;
+  min-width: 3em;
+  text-align: center;
+}
+
+.aidu-presentation-activity .reveal .compact-table img {
+  display: inline-block;
+  height: 30px;
+  max-height: 30px;
+  width: auto;
+  max-width: none;
+  vertical-align: middle;
+}
+
+/* Match Quarto Reveal's `.columns` / `.column` layout. Explicit column
+   widths are emitted as flex bases by the fenced-div Markdown renderer. */
+.aidu-presentation-activity .reveal .columns {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: stretch;
+  gap: 1em;
+  width: 100%;
+}
+
+.aidu-presentation-activity .reveal .columns > .column {
+  box-sizing: border-box;
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.aidu-presentation-activity .reveal .columns > .column > :not(ul, ol) {
+  margin-right: 0.25rem;
+  margin-left: 0.25rem;
+}
+
+.aidu-presentation-activity .reveal .columns > .column:first-child > :not(ul, ol) {
+  margin-right: 0.5rem;
+  margin-left: 0;
+}
+
+.aidu-presentation-activity .reveal .columns > .column:last-child > :not(ul, ol) {
+  margin-right: 0;
+  margin-left: 0.5rem;
+}
+
+.aidu-presentation-activity .reveal .columns img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Keep support for older slides that used the custom `.two-col` class. */
+.aidu-presentation-activity .reveal .two-col {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 2rem;
   align-items: center;
 }
 
-.two-col .column {
+.aidu-presentation-activity .reveal .two-col .column {
   min-width: 0;
 }
 
-.two-col img {
+.aidu-presentation-activity .reveal .two-col img {
   max-width: 100%;
   height: auto;
 }
+
+/* Keep the chalk and marker palettes above the plugin's full-screen canvas.
+   The plugin's original palette icons assume Font Awesome is present, so draw
+   the color swatches with CSS instead. */
+.aidu-presentation-activity .palette,
+.aidu-presentation-activity .boardhandle {
+  z-index: 2;
+}
+
+.aidu-presentation-activity .palette {
+  left: 0;
+  padding: 0.25rem;
+  border: 1px solid rgb(255 255 255 / 35%);
+  background: rgb(20 24 28 / 92%);
+}
+
+.aidu-presentation-activity .palette > ul > li {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  margin: 4px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.aidu-presentation-activity .palette > ul > li[data-color]::before {
+  width: 20px;
+  height: 20px;
+  border: 2px solid white;
+  border-radius: 50%;
+  background: currentColor;
+  content: "";
+}
+
+.aidu-presentation-activity .palette > ul > li:hover,
+.aidu-presentation-activity .boardhandle a:hover {
+  background: rgb(255 255 255 / 18%);
+}
+
+.aidu-presentation-activity .boardhandle {
+  padding: 0.25rem;
+  border: 1px solid rgb(255 255 255 / 35%);
+  border-radius: 8px;
+  background: rgb(20 24 28 / 92%);
+}
+
+.aidu-presentation-activity__actions {
+  position: absolute;
+  z-index: 100;
+  top: 0.75rem;
+  right: 0.75rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.aidu-presentation-activity__actions button {
+  border: 1px solid #cbd5e1;
+  border-radius: 0.375rem;
+  padding: 0.45rem 0.75rem;
+  background: #fff;
+  color: #17212b;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.aidu-presentation-menu__button {
+  position: fixed;
+  z-index: 1100;
+  bottom: 16px;
+  left: 16px;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: rgb(0 0 0 / 65%);
+  color: white;
+  font: 22px/42px sans-serif;
+  text-align: center;
+  cursor: pointer;
+}
+
+.aidu-presentation-menu__button:hover,
+.aidu-presentation-menu__button:focus-visible {
+  background: rgb(0 0 0 / 85%);
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+.aidu-presentation-chalkboard__button {
+  position: fixed;
+  z-index: 1100;
+  left: 66px;
+  bottom: 16px;
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  padding: 9px;
+  border: 0;
+  border-radius: 4px;
+  background: rgb(0 0 0 / 65%);
+  color: white;
+  cursor: pointer;
+}
+
+.aidu-presentation-print__button {
+  position: fixed;
+  z-index: 1100;
+  bottom: 16px;
+  left: 116px;
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  padding: 9px;
+  border: 0;
+  border-radius: 4px;
+  background: rgb(0 0 0 / 65%);
+  color: white;
+  cursor: pointer;
+}
+
+.aidu-presentation-chalkboard__button svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.aidu-presentation-print__button svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.aidu-presentation-chalkboard__button:hover,
+.aidu-presentation-chalkboard__button:focus-visible,
+.aidu-presentation-print__button:hover,
+.aidu-presentation-print__button:focus-visible {
+  background: rgb(0 0 0 / 85%);
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+.aidu-presentation-menu__backdrop {
+  position: fixed;
+  z-index: 1040;
+  inset: 0;
+  border: 0;
+  background: transparent;
+  cursor: default;
+}
+
+.aidu-presentation-menu {
+  position: fixed;
+  z-index: 1050;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 360px;
+  max-width: 80vw;
+  overflow-y: auto;
+  background: #fff;
+  color: #222;
+  box-shadow: 4px 0 18px rgb(0 0 0 / 25%);
+}
+
+.aidu-presentation-menu__heading {
+  margin: 0;
+  padding: 20px 24px;
+  border-bottom: 1px solid #ddd;
+  font: 600 1.2rem sans-serif;
+}
+
+.aidu-presentation-menu__items {
+  display: grid;
+  gap: 0;
+  padding: 8px 0 72px;
+}
+
+.aidu-presentation-menu__item {
+  width: 100%;
+  padding: 10px 24px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: 1rem sans-serif;
+  text-align: left;
+  cursor: pointer;
+}
+
+.aidu-presentation-menu__item:hover {
+  background: #eee;
+}
+
+.aidu-presentation-menu__item:focus-visible {
+  outline: 2px solid #666;
+  outline-offset: -2px;
+}
+
+.aidu-presentation-activity__status,
+.aidu-presentation-activity__error {
+  position: absolute;
+  z-index: 110;
+  top: 50%;
+  left: 50%;
+  max-width: min(36rem, 85%);
+  transform: translate(-50%, -50%);
+  padding: 1rem 1.25rem;
+  border-radius: 0.5rem;
+  background: #fff;
+  box-shadow: 0 4px 24px #0002;
+}
+
+.aidu-presentation-activity__error {
+  color: #991b1b;
+}
+
+/* Standalone MyPandoc navigation controls, sharing this canonical sheet. */
+#slide-menu-button {
+  position: fixed; z-index: 1100; left: 16px; bottom: 16px; width: 42px; height: 42px;
+  padding: 0; border: 0; border-radius: 4px; background: rgb(0 0 0 / 65%); color: #fff;
+  font: 22px/42px sans-serif; text-align: center; cursor: pointer; pointer-events: auto;
+}
+#slide-menu-button:hover { background: rgb(0 0 0 / 85%); }
+#slide-menu {
+  position: fixed; z-index: 1050; top: 0; bottom: 0; left: 0; width: 360px; max-width: 80vw;
+  overflow-y: auto; background: #fff; color: #222; box-shadow: 4px 0 18px rgb(0 0 0 / 25%);
+  transform: translateX(-100%); transition: transform 180ms ease; pointer-events: auto;
+}
+#slide-menu.open { transform: translateX(0); }
+#slide-menu-header { padding: 20px 24px; border-bottom: 1px solid #ddd; font: 600 1.2rem sans-serif; }
+#slide-menu-items { padding: 8px 0 72px; }
+.slide-menu-item {
+  display: block; width: 100%; padding: 10px 24px; border: 0; background: transparent; color: inherit;
+  font: 1rem sans-serif; text-align: left; cursor: pointer;
+}
+.slide-menu-item:hover { background: #eee; }
+.slide-menu-item:focus { outline: 2px solid #666; outline-offset: -2px; }

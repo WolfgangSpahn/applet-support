@@ -3,18 +3,18 @@
   "version": "0.1.0",
   "type": "module",
   "private": true,
-
   "scripts": {
-    "build": "vite build && esbuild src/reveal-menu.ts --bundle --format=iife --outfile=dist/reveal-menu.js"
+    "build": "vite build && esbuild src/reveal-menu.ts --bundle --format=iife --outfile=dist/reveal-menu.js && esbuild src/print.ts --bundle --format=iife --global-name=MyPandocPrint --outfile=dist/print.js"
   },
-
   "dependencies": {
     "jsdom": "^26.1.0"
   },
-
   "devDependencies": {
     "esbuild": "^0.25.0",
     "typescript": "^5.8.0",
     "vite": "^7.3.6"
+  },
+  "bin": {
+    "mypandoc": "dist/mypandoc.js"
   }
 }
