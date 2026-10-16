@@ -22,6 +22,7 @@ export interface BlendedMarkedOptions {
   titleId?: string;
   imageResolver?: (src: string) => string;
   classNames?: BlendedMarkedClassNames;
+  htmlReplacements?: ReadonlyMap<string, string>;
 }
 
 interface RenderState {
@@ -251,6 +252,12 @@ function isOpeningFencedDiv(line: string) {
 }
 
 function renderFencedDiv(info: FencedDivInfo, content: string) {
+  if (info.classes.includes('incremental')) {
+    const template = document.createElement('template');
+    template.innerHTML = content;
+    template.content.querySelectorAll('li').forEach((item) => item.classList.add('fragment'));
+    content = template.innerHTML;
+  }
   const classNames = info.classes.map((item) => escapeAttribute(item)).join(' ');
   const classAttribute = classNames ? ` class="${classNames}"` : '';
   const attributes = { ...info.attributes };
@@ -267,6 +274,87 @@ function renderFencedDiv(info: FencedDivInfo, content: string) {
     : '';
   const attributeEntries = Object.entries(attributes).map(([key, value]) => ` data-${escapeAttribute(key)}="${escapeAttribute(value)}"`);
   return `<div${classAttribute}${styleAttribute}${attributeEntries.join('')}>${content}</div>`;
+}
+
+function matchingBracketEnd(text: string, start: number) {
+  let depth = 0;
+  for (let index = start; index < text.length; index += 1) {
+    if (text[index] === '\\') {
+      index += 1;
+      continue;
+    }
+    if (text[index] === '[') depth += 1;
+    if (text[index] === ']') {
+      depth -= 1;
+      if (depth === 0) return index;
+    }
+  }
+  return -1;
+}
+
+function renderPandocSpans(markdown: string): string {
+  const lines = markdown.split(/\r?\n/);
+  const normalizedLines: string[] = [];
+  let joiningTitledListItem = false;
+  for (const line of lines) {
+    if (/^\s*[-+*]\s+.*\]\{[^}]*\btitle\s*=/.test(line)) {
+      joiningTitledListItem = true;
+      normalizedLines.push(line);
+      continue;
+    }
+    if (joiningTitledListItem && /^\s{2,}\S/.test(line) && !/^\s{2,}[-+*]\s/.test(line) && /\]\{[^}]*\btitle\s*=/.test(line)) {
+      normalizedLines[normalizedLines.length - 1] += ` ${line.trim()}`;
+      continue;
+    }
+    joiningTitledListItem = false;
+    normalizedLines.push(line);
+  }
+  markdown = normalizedLines.join('\n');
+
+  let output = '';
+  for (let index = 0; index < markdown.length;) {
+    if (markdown[index] !== '[' || (index > 0 && markdown[index - 1] === '\\')) {
+      output += markdown[index++];
+      continue;
+    }
+    const end = matchingBracketEnd(markdown, index);
+    if (end < 0 || markdown[end + 1] !== '{') {
+      output += markdown[index++];
+      continue;
+    }
+    const close = markdown.indexOf('}', end + 2);
+    if (close < 0) {
+      output += markdown[index++];
+      continue;
+    }
+    const rawAttributes = markdown.slice(end + 2, close);
+    const tokens = rawAttributes.match(/(?:\.[A-Za-z][\w-]*|#[A-Za-z][\w-]*|[A-Za-z][\w:-]*\s*=\s*(?:"[^"]*"|'[^']*'|[^\s]+))/g) ?? [];
+    const attributes: string[] = [];
+    const classes: string[] = [];
+    for (const token of tokens) {
+      if (token.startsWith('.')) {
+        classes.push(token.slice(1));
+        continue;
+      }
+      if (token.startsWith('#')) {
+        attributes.push(`id="${escapeAttribute(token.slice(1))}"`);
+        continue;
+      }
+      const parsed = /^([A-Za-z][\w:-]*)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s]+))$/.exec(token);
+      if (!parsed) continue;
+      const name = parsed[1].toLowerCase();
+      if (name !== 'title' && name !== 'class' && name !== 'id') continue;
+      const value = parsed[2] ?? parsed[3] ?? parsed[4] ?? '';
+      if (name === 'class') classes.push(...value.split(/\s+/).filter(Boolean));
+      else attributes.push(`${name}="${escapeAttribute(value)}"`);
+    }
+    if (classes.length) attributes.push(`class="${escapeAttribute(classes.join(' '))}"`);
+    output += `<span${attributes.length ? ` ${attributes.join(' ')}` : ''}>${renderPandocSpans(markdown.slice(index + 1, end))}</span>`;
+    index = close + 1;
+  }
+  // Browsers treat br as a void tag; a closing tag can swallow following inline
+  // content in some HTML parsing contexts.
+  return output.replace(/<\/br\s*>/gi, '<br>');
 }
 
 function renderMarkdownFragment(markdown: string, options: BlendedMarkedOptions, state: RenderState) {
@@ -334,13 +422,16 @@ function renderMarkdownFragment(markdown: string, options: BlendedMarkedOptions,
       return `<figure class="quarto-figure quarto-figure-center">${image}<figcaption>${caption}</figcaption></figure>`;
     },
   );
-  const { protectedText, placeholders } = protectInlineRenderables(withImageAttributes);
+  const { protectedText, placeholders } = protectInlineRenderables(renderPandocSpans(withImageAttributes));
   let html = marked.parse(protectedText, { async: false }) as string;
   html = applyDomTransforms(html, options, state);
   html = restorePlaceholders(html, placeholders);
 
+  for (const [placeholder, replacement] of options.htmlReplacements ?? []) {
+    html = html.split(placeholder).join(replacement);
+  }
   return DOMPurify.sanitize(html, {
-    ADD_TAGS: ['svg', 'path', 'g', 'line', 'circle', 'ellipse', 'polygon', 'polyline', 'text', 'defs', 'marker', 'rect', 'span', 'sup'],
+    ADD_TAGS: ['video', 'source', 'svg', 'path', 'g', 'line', 'circle', 'ellipse', 'polygon', 'polyline', 'text', 'defs', 'marker', 'rect', 'span', 'sup'],
     ADD_ATTR: [
       'class',
       'style',
@@ -348,6 +439,14 @@ function renderMarkdownFragment(markdown: string, options: BlendedMarkedOptions,
       'target',
       'rel',
       'src',
+      'controls',
+      'type',
+      'preload',
+      'poster',
+      'autoplay',
+      'loop',
+      'muted',
+      'playsinline',
       'alt',
       'title',
       'loading',
@@ -486,6 +585,9 @@ function applyDomTransforms(html: string, options: BlendedMarkedOptions, state: 
   template.content.querySelectorAll('h3').forEach((node) => {
     node.classList.add(...splitClasses(classes.h3));
   });
+  template.content.querySelectorAll('.incremental li').forEach((node) => {
+    node.classList.add('fragment');
+  });
   template.content.querySelectorAll('img').forEach((node) => {
     node.classList.add(...splitClasses(classes.image));
     const declaredHeight = node.style.height || node.getAttribute('height') || '';
@@ -498,8 +600,23 @@ function applyDomTransforms(html: string, options: BlendedMarkedOptions, state: 
     }
   });
   template.content.querySelectorAll('a').forEach((node) => {
-    node.setAttribute('target', '_blank');
-    node.setAttribute('rel', 'noreferrer');
+    const href = node.getAttribute('href');
+    let isSameDocument = false;
+    if (href) {
+      try {
+        const url = new URL(href, document.baseURI);
+        isSameDocument = url.origin === window.location.origin
+          && url.pathname === window.location.pathname
+          && url.search === window.location.search
+          && Boolean(url.hash);
+      } catch {
+        // Invalid URLs keep the renderer's normal external-link behavior.
+      }
+    }
+    if (!isSameDocument) {
+      node.setAttribute('target', '_blank');
+      node.setAttribute('rel', 'noreferrer');
+    }
   });
 
   return template.innerHTML;
